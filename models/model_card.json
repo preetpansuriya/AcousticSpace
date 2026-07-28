@@ -1,0 +1,16 @@
+{
+  "model_name": "Audio Spectrogram Transformer (AST) + Librosa RIR Forensic Engine",
+  "version": "2.4.0",
+  "architecture": "AST Transformer + Ensemble Acoustic Physics Fusion",
+  "training_corpora": [
+    "DFBench Speech25 Corpus",
+    "ASVspoof 2021 Evaluation",
+    "Infotact Synthetic Forensics Library"
+  ],
+  "metrics": {
+    "equal_error_rate_eer": 1.42,
+    "auc_roc": 0.992,
+    "accuracy": 98.6
+  },
+  "license": "MIT"
+}

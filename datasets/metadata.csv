@@ -1,0 +1,5 @@
+id,file_name,label,duration_s,sample_rate,speaker_id,vocoder
+001,dfbench_sample_01.wav,fake,8.5,22050,spk_12,ElevenLabs_v2
+002,dfbench_sample_02.wav,real,12.0,22050,spk_05,Human_Studio_Mic
+003,dfbench_sample_03.wav,fake,6.2,22050,spk_88,Tortoise_TTS
+004,dfbench_sample_04.wav,real,15.4,22050,spk_01,Human_Podcast_Mic

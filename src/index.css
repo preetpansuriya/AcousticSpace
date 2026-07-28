@@ -1,0 +1,289 @@
+@import "tailwindcss";
+
+@layer utilities {
+  /* Default Ultra-Impression Luxury Cyberpunk Glass Theme */
+  .bg-glass-gradient {
+    background: radial-gradient(circle at 50% -10%, rgba(6, 182, 212, 0.22), transparent 55%),
+                radial-gradient(circle at 5% 100%, rgba(99, 102, 241, 0.2), transparent 50%),
+                radial-gradient(circle at 95% 45%, rgba(16, 185, 129, 0.18), transparent 45%),
+                #030712;
+  }
+
+  /* Royal Emerald Gold Theme */
+  .theme-emerald .bg-glass-gradient {
+    background: radial-gradient(circle at 50% -10%, rgba(16, 185, 129, 0.25), transparent 55%),
+                radial-gradient(circle at 10% 90%, rgba(217, 119, 6, 0.18), transparent 50%),
+                radial-gradient(circle at 90% 50%, rgba(20, 184, 166, 0.2), transparent 45%),
+                #02120e;
+  }
+
+  /* Midnight Amethyst & Gold Theme */
+  .theme-amethyst .bg-glass-gradient {
+    background: radial-gradient(circle at 50% -10%, rgba(168, 85, 247, 0.28), transparent 55%),
+                radial-gradient(circle at 10% 90%, rgba(236, 72, 153, 0.22), transparent 50%),
+                radial-gradient(circle at 90% 50%, rgba(245, 158, 11, 0.18), transparent 45%),
+                #0a0318;
+  }
+
+  /* Sapphire & Electric Amber Theme */
+  .theme-sapphire .bg-glass-gradient {
+    background: radial-gradient(circle at 50% -10%, rgba(37, 99, 235, 0.3), transparent 55%),
+                radial-gradient(circle at 5% 100%, rgba(249, 115, 22, 0.25), transparent 50%),
+                radial-gradient(circle at 95% 45%, rgba(6, 182, 212, 0.2), transparent 45%),
+                #020b18;
+  }
+
+  /* Obsidian Crimson Gold Theme */
+  .theme-crimson .bg-glass-gradient {
+    background: radial-gradient(circle at 50% -10%, rgba(225, 29, 72, 0.28), transparent 55%),
+                radial-gradient(circle at 10% 90%, rgba(217, 119, 6, 0.22), transparent 50%),
+                radial-gradient(circle at 90% 50%, rgba(159, 18, 57, 0.2), transparent 45%),
+                #0b0206;
+  }
+
+  /* Titanium OLED Dark Theme */
+  .theme-titanium .bg-glass-gradient {
+    background: radial-gradient(circle at 50% -10%, rgba(245, 158, 11, 0.18), transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(59, 130, 246, 0.15), transparent 45%),
+                #05070a;
+  }
+
+  /* Synthwave Radar Theme */
+  .theme-synthwave .bg-glass-gradient {
+    background: radial-gradient(circle at 50% -10%, rgba(217, 70, 239, 0.25), transparent 50%),
+                radial-gradient(circle at 0% 100%, rgba(147, 51, 234, 0.22), transparent 45%),
+                radial-gradient(circle at 100% 50%, rgba(244, 63, 94, 0.2), transparent 45%),
+                #0b0316;
+  }
+
+  /* Clinical Pearl White Theme */
+  .theme-light .bg-glass-gradient {
+    background: radial-gradient(circle at 50% -10%, rgba(56, 189, 248, 0.15), transparent 50%),
+                radial-gradient(circle at 100% 100%, rgba(99, 102, 241, 0.1), transparent 45%),
+                #f8fafc;
+    color: #0f172a;
+  }
+
+  /* Glass Panels with High-Depth 3D Reflection */
+  .glass-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(255, 255, 255, 0.06) 100%), rgba(15, 23, 42, 0.75);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.18);
+    box-shadow: inset 0 1px 2px 0 rgba(255, 255, 255, 0.45), inset 0 -1px 1px 0 rgba(0, 0, 0, 0.5), 0 20px 45px -15px rgba(0, 0, 0, 0.7), 0 0 35px -10px rgba(6, 182, 212, 0.2);
+  }
+
+  /* Interactive 3D Glass Card with Tilt & Sheen Light Reflection */
+  .glass-3d-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.09) 100%), rgba(15, 23, 42, 0.82);
+    backdrop-filter: blur(28px);
+    -webkit-backdrop-filter: blur(28px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 2px 0 rgba(255, 255, 255, 0.5), inset 0 -2px 4px 0 rgba(0, 0, 0, 0.6), 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 30px 0 rgba(6, 182, 212, 0.22);
+    transition: all 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .glass-3d-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 65%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transform: skewX(-25deg);
+    transition: left 0.75s ease;
+    pointer-events: none;
+  }
+
+  .glass-3d-card:hover::before {
+    left: 150%;
+  }
+
+  .glass-3d-card:hover {
+    transform: translateY(-5px) scale(1.012);
+    border-color: rgba(56, 189, 248, 0.6);
+    box-shadow: inset 0 1px 3px 0 rgba(255, 255, 255, 0.7), 0 35px 75px -15px rgba(6, 182, 212, 0.4), 0 0 40px 0 rgba(6, 182, 212, 0.45);
+  }
+
+  /* Realistic 3D Glass Metallic Button */
+  .glass-3d-button {
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(0, 0, 0, 0.25) 100%), rgba(6, 182, 212, 0.85);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.7), inset 0 -2px 4px 0 rgba(0, 0, 0, 0.45), 0 12px 25px -5px rgba(6, 182, 212, 0.45);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-3d-button:hover {
+    transform: translateY(-2px);
+    box-shadow: inset 0 1px 2px 0 rgba(255, 255, 255, 0.9), inset 0 -2px 4px 0 rgba(0, 0, 0, 0.45), 0 18px 32px -5px rgba(6, 182, 212, 0.65);
+  }
+
+  .glass-3d-button:active {
+    transform: translateY(1px);
+    box-shadow: inset 0 2px 5px 0 rgba(0, 0, 0, 0.65), 0 5px 12px -3px rgba(6, 182, 212, 0.35);
+  }
+
+  .theme-emerald .glass-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(4, 30, 24, 0.85);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+    box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.4), 0 20px 45px -15px rgba(0, 0, 0, 0.8), 0 0 35px -10px rgba(16, 185, 129, 0.3);
+  }
+
+  .theme-amethyst .glass-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(236, 72, 153, 0.03) 100%), rgba(20, 8, 38, 0.85);
+    border: 1px solid rgba(168, 85, 247, 0.35);
+    box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.45), 0 20px 45px -15px rgba(0, 0, 0, 0.85), 0 0 35px -10px rgba(168, 85, 247, 0.35);
+  }
+
+  .theme-sapphire .glass-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(249, 115, 22, 0.03) 100%), rgba(5, 18, 40, 0.88);
+    border: 1px solid rgba(59, 130, 246, 0.35);
+    box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.45), 0 20px 45px -15px rgba(0, 0, 0, 0.85), 0 0 35px -10px rgba(37, 99, 235, 0.35);
+  }
+
+  .theme-crimson .glass-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.14) 0%, rgba(217, 119, 6, 0.03) 100%), rgba(25, 4, 12, 0.88);
+    border: 1px solid rgba(225, 29, 72, 0.35);
+    box-shadow: inset 0 1px 1.5px 0 rgba(255, 255, 255, 0.45), 0 20px 45px -15px rgba(0, 0, 0, 0.85), 0 0 35px -10px rgba(225, 29, 72, 0.35);
+  }
+
+  .theme-titanium .glass-panel {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.01) 100%), rgba(12, 16, 24, 0.88);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.2), 0 20px 40px -15px rgba(0, 0, 0, 0.8);
+  }
+
+  .theme-synthwave .glass-panel {
+    background: linear-gradient(135deg, rgba(244, 114, 182, 0.12) 0%, rgba(147, 51, 234, 0.03) 100%), rgba(24, 11, 40, 0.8);
+    border: 1px solid rgba(244, 114, 182, 0.25);
+    box-shadow: inset 0 1px 1px 0 rgba(244, 114, 182, 0.3), 0 20px 40px -15px rgba(217, 70, 239, 0.25);
+  }
+
+  .theme-light .glass-panel {
+    background: rgba(255, 255, 255, 0.88);
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    box-shadow: inset 0 1px 1px 0 rgba(255, 255, 255, 0.9), 0 10px 25px -5px rgba(148, 163, 184, 0.25);
+    color: #0f172a;
+  }
+  
+  .glass-panel-interactive {
+    background: rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .glass-panel-interactive:hover {
+    background: rgba(30, 41, 59, 0.8);
+    border-color: rgba(56, 189, 248, 0.4);
+    box-shadow: 0 12px 40px 0 rgba(14, 165, 233, 0.25);
+    transform: translateY(-2px);
+  }
+
+  .glass-card {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.09) 0%, rgba(255, 255, 255, 0.02) 100%), rgba(15, 23, 42, 0.65);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .theme-light .glass-card {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  }
+
+  .glass-pill {
+    background: rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+  }
+
+  .theme-light .glass-pill {
+    background: rgba(241, 245, 249, 0.9);
+    border: 1px solid rgba(203, 213, 225, 0.8);
+    color: #1e293b;
+  }
+
+  .glass-glow-cyan {
+    box-shadow: 0 0 35px -5px rgba(6, 182, 212, 0.4);
+  }
+
+  .glass-glow-emerald {
+    box-shadow: 0 0 35px -5px rgba(16, 185, 129, 0.4);
+  }
+
+  .glass-glow-rose {
+    box-shadow: 0 0 35px -5px rgba(244, 63, 94, 0.4);
+  }
+
+  /* Modern 3D Perspective & Depth Layering */
+  .perspective-1000 {
+    perspective: 1000px;
+  }
+
+  .preserve-3d {
+    transform-style: preserve-3d;
+  }
+
+  .translate-z-10 {
+    transform: translateZ(10px);
+  }
+
+  .translate-z-20 {
+    transform: translateZ(20px);
+  }
+
+  .translate-z-30 {
+    transform: translateZ(30px);
+  }
+
+  /* Ultra 3D Floating Animation */
+  @keyframes float3D {
+    0%, 100% {
+      transform: translateY(0px) rotateX(0deg) rotateY(0deg);
+    }
+    50% {
+      transform: translateY(-8px) rotateX(2deg) rotateY(-2deg);
+    }
+  }
+
+  .animate-float-3d {
+    animation: float3D 6s ease-in-out infinite;
+  }
+
+  /* 3D Embossed Metallic Border Panel */
+  .glass-3d-emboss {
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.18) 0%, rgba(255, 255, 255, 0.02) 40%, rgba(0, 0, 0, 0.25) 100%), rgba(15, 23, 42, 0.85);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow: 
+      inset 1px 1px 2px 0 rgba(255, 255, 255, 0.6),
+      inset -2px -2px 4px 0 rgba(0, 0, 0, 0.6),
+      0 15px 35px -10px rgba(0, 0, 0, 0.6);
+  }
+
+  /* 3D Dynamic Light Beam Glow Orbs */
+  .glow-3d-orb-cyan {
+    background: radial-gradient(circle, rgba(6, 182, 212, 0.35) 0%, rgba(6, 182, 212, 0) 70%);
+    filter: blur(30px);
+  }
+
+  .glow-3d-orb-purple {
+    background: radial-gradient(circle, rgba(168, 85, 247, 0.35) 0%, rgba(168, 85, 247, 0) 70%);
+    filter: blur(30px);
+  }
+}
+
+a, button, span, div {
+  text-decoration: none !important;
+}
+
+

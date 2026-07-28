@@ -1,0 +1,6 @@
+{
+  "name": "AcousticSpace: Deepfake Detection via Room Impulse Response (RIR)",
+  "description": "Deepfake audio detection via Room Impulse Response (RIR), environmental reverb isolation, breathing cadence analysis, and Audio Spectrogram Transformer (AST) with FastAPI gateway.",
+  "requestFramePermissions": ["microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

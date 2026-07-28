@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acousticspace_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=production
+      - API_SECRET_KEY=acousticspace_secret_2026
+      - DATABASE_URL=sqlite:///./acousticspace.db
+    volumes:
+      - ./models:/app/models
+      - ./datasets:/app/datasets
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: acousticspace_frontend
+    command: npm run preview
+    ports:
+      - "3000:3000"
+    depends_on:
+      - backend
+    restart: unless-stopped
