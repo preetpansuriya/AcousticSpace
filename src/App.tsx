@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Activity, Database, History, FileText, HelpCircle, ArrowLeftRight, Mic, ArrowLeft } from 'lucide-react';
-import { ForensicReport, BenchmarkSample, AnalysisHistoryItem } from './types';
+import { Activity, Database, History, FileText, HelpCircle, ArrowLeftRight, Mic, ArrowLeft, Layers, Sliders, Sparkles } from 'lucide-react';
+import { ForensicReport, BenchmarkSample, AnalysisHistoryItem, AnalysisSettings } from './types';
 import {
   fetchHealth,
   fetchBenchmarkSamples,
@@ -12,6 +12,7 @@ import {
   fetchReportById,
   deleteHistoryItem
 } from './services/api';
+import { initAuthSession, fetchReportByShareId } from './services/firebaseService';
 import { Navbar } from './components/Navbar';
 import { DashboardPage } from './pages/DashboardPage';
 import { ComparePage } from './pages/ComparePage';
@@ -21,6 +22,10 @@ import { ModelDocsPage } from './pages/ModelDocsPage';
 import { ReportsPage } from './pages/ReportsPage';
 import { LiveMicPage } from './pages/LiveMicPage';
 import { ReportExportModal } from './components/ReportExportModal';
+import { BulkScannerModal } from './components/BulkScannerModal';
+import { SettingsModal } from './components/SettingsModal';
+import { AuthModal } from './components/AuthModal';
+import { HowItWorksModal } from './components/HowItWorksModal';
 
 const ParticleBackground3D: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
@@ -121,46 +126,261 @@ const ParticleBackground3D: React.FC = () => {
   );
 };
 
+const OpeningSplash: React.FC<{ onComplete: () => void }> = ({ onComplete }) => {
+  const [progress, setProgress] = useState<number>(0);
+  const [statusText, setStatusText] = useState<string>('INITIALIZING ACOUSTIC NEURAL ENGINE...');
+
+  useEffect(() => {
+    const timer1 = setTimeout(() => { setProgress(30); setStatusText('CALIBRATING 3D SPECTROGRAM SPECTRUM...'); }, 300);
+    const timer2 = setTimeout(() => { setProgress(65); setStatusText('SYNCHRONIZING BIOMETRIC VOICE PRINTS...'); }, 750);
+    const timer3 = setTimeout(() => { setProgress(90); setStatusText('AUTHENTICATING SECURITY HANDSHAKE...'); }, 1200);
+    const timer4 = setTimeout(() => { setProgress(100); setStatusText('SYSTEM ACCESS GRANTED'); }, 1600);
+    const timer5 = setTimeout(() => { onComplete(); }, 2000);
+
+    return () => {
+      clearTimeout(timer1);
+      clearTimeout(timer2);
+      clearTimeout(timer3);
+      clearTimeout(timer4);
+      clearTimeout(timer5);
+    };
+  }, [onComplete]);
+
+  return (
+    <motion.div
+      initial={{ opacity: 1 }}
+      exit={{ opacity: 0, scale: 1.08, filter: 'blur(10px)' }}
+      transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+      className="fixed inset-0 z-[100] flex flex-col items-center justify-center bg-slate-950 text-white p-6 overflow-hidden select-none"
+    >
+      {/* Dynamic Cyber Grid Background */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,#082f4915_1px,transparent_1px),linear-gradient(to_bottom,#082f4915_1px,transparent_1px)] bg-[size:32px_32px] pointer-events-none" />
+
+      {/* Holographic Glowing Orbs */}
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <motion.div
+          animate={{ scale: [0.8, 1.3, 0.8], opacity: [0.2, 0.5, 0.2] }}
+          transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
+          className="w-[500px] h-[500px] rounded-full bg-gradient-to-r from-cyan-500/20 via-blue-600/20 to-indigo-600/20 blur-[120px]"
+        />
+      </div>
+
+      {/* 3D Holographic Sonar Radar Sweep Animation */}
+      <div className="relative z-10 text-center max-w-md space-y-7 flex flex-col items-center">
+        <div className="relative w-44 h-44 flex items-center justify-center">
+          {/* Outer Rotating Target Ring */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 12, repeat: Infinity, ease: 'linear' }}
+            className="absolute inset-0 rounded-full border-2 border-dashed border-cyan-500/30"
+          />
+
+          {/* Inner Counter-Rotating Ring */}
+          <motion.div
+            animate={{ rotate: -360 }}
+            transition={{ duration: 8, repeat: Infinity, ease: 'linear' }}
+            className="absolute inset-2 rounded-full border border-blue-400/20 border-t-cyan-400 border-r-transparent"
+          />
+
+          {/* Radar Radar Sweeper Line */}
+          <motion.div
+            animate={{ rotate: 360 }}
+            transition={{ duration: 2.5, repeat: Infinity, ease: 'linear' }}
+            className="absolute inset-0 rounded-full origin-center pointer-events-none flex items-center justify-center"
+          >
+            <div className="w-1/2 h-0.5 bg-gradient-to-r from-cyan-400 to-transparent absolute right-0 top-1/2 -translate-y-1/2 origin-left shadow-[0_0_10px_#22d3ee]" />
+          </motion.div>
+
+          {/* Concentric Sonar Pulses */}
+          <motion.div
+            animate={{ scale: [0.2, 1.1], opacity: [0.8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
+            className="absolute inset-0 rounded-full border border-cyan-400/60 bg-cyan-500/10"
+          />
+          <motion.div
+            animate={{ scale: [0.2, 1.1], opacity: [0.8, 0] }}
+            transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 1 }}
+            className="absolute inset-0 rounded-full border border-blue-400/60 bg-blue-500/10"
+          />
+
+          {/* Central Holographic Icon Container */}
+          <motion.div
+            initial={{ scale: 0, rotate: -90 }}
+            animate={{ scale: 1, rotate: 0 }}
+            transition={{ type: 'spring', stiffness: 220, damping: 20 }}
+            className="relative z-20 w-20 h-20 rounded-2xl bg-slate-900/90 border border-cyan-400/50 p-3 shadow-2xl shadow-cyan-500/50 backdrop-blur-xl flex items-center justify-center"
+          >
+            <Activity className="w-10 h-10 text-cyan-400 animate-pulse" />
+            <motion.div
+              animate={{ opacity: [0.4, 1, 0.4] }}
+              transition={{ duration: 1.5, repeat: Infinity }}
+              className="absolute inset-0 bg-cyan-400/10 rounded-2xl blur-md"
+            />
+          </motion.div>
+        </div>
+
+        {/* Title & Tagline */}
+        <motion.div
+          initial={{ opacity: 0, y: 15 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="space-y-1.5"
+        >
+          <div className="flex items-center justify-center space-x-2">
+            <Sparkles className="w-4 h-4 text-cyan-400 animate-spin" />
+            <h1 className="text-2xl md:text-3xl font-black tracking-wider text-white bg-clip-text text-transparent bg-gradient-to-r from-cyan-300 via-white to-blue-300 uppercase">
+              AcousticSpace
+            </h1>
+          </div>
+          <p className="text-[11px] font-extrabold uppercase tracking-widest text-cyan-400/90 font-mono">
+            3D Forensics & Acoustic Deepfake Engine
+          </p>
+        </motion.div>
+
+        {/* Dynamic Equalizer Bars Wave */}
+        <div className="flex items-center justify-center space-x-1 h-8 px-4">
+          {[35, 75, 40, 95, 60, 100, 50, 85, 45, 90, 30, 80, 55, 70, 40].map((h, idx) => (
+            <motion.span
+              key={idx}
+              animate={{ height: ['15%', `${h}%`, '15%'] }}
+              transition={{ duration: 0.7, repeat: Infinity, delay: idx * 0.06 }}
+              className="w-1 rounded-full bg-gradient-to-t from-cyan-500 via-blue-400 to-indigo-300 shadow-[0_0_6px_#06b6d4]"
+            />
+          ))}
+        </div>
+
+        {/* High-Tech Progress Matrix */}
+        <div className="w-full space-y-2">
+          <div className="w-full h-2.5 bg-slate-900 border border-cyan-500/30 rounded-full overflow-hidden p-0.5 shadow-inner">
+            <motion.div
+              className="h-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500 rounded-full shadow-[0_0_12px_#22d3ee]"
+              initial={{ width: '0%' }}
+              animate={{ width: `${progress}%` }}
+              transition={{ ease: 'easeOut', duration: 0.3 }}
+            />
+          </div>
+          <div className="flex justify-between items-center text-[10px] font-mono">
+            <span className="text-cyan-300 font-bold tracking-wider flex items-center space-x-1">
+              <span className="w-1.5 h-1.5 rounded-full bg-cyan-400 animate-ping inline-block mr-1"></span>
+              {statusText}
+            </span>
+            <span className="text-slate-400 font-extrabold">{progress}%</span>
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+};
+
 export default function App() {
+  const [isSplashShowing, setIsSplashShowing] = useState<boolean>(true);
   const [activeTab, setActiveTab] = useState<string>('home');
-  const [currentTheme] = useState<string>('theme-cyberpunk');
   const [geminiActive, setGeminiActive] = useState<boolean>(false);
   const [benchmarkSamples, setBenchmarkSamples] = useState<BenchmarkSample[]>([]);
   const [historyItems, setHistoryItems] = useState<AnalysisHistoryItem[]>([]);
   const [currentReport, setCurrentReport] = useState<ForensicReport | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [isExportModalOpen, setIsExportModalOpen] = useState<boolean>(false);
+  const [isBulkScannerOpen, setIsBulkScannerOpen] = useState<boolean>(false);
+  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
+  const [isAuthOpen, setIsAuthOpen] = useState<boolean>(true);
+  const [isHowItWorksOpen, setIsHowItWorksOpen] = useState<boolean>(false);
+  const [currentUser, setCurrentUser] = useState<{ email?: string; isGuest?: boolean } | null>(null);
 
-  // Initialize data on mount
+  const [settings, setSettings] = useState<AnalysisSettings>({
+    sensitivityThreshold: 85,
+    noiseReductionEnabled: false,
+    customFastApiUrl: 'http://localhost:8000/api/v1/analyze',
+    themeMode: 'cyberpunk',
+    customBrandingName: 'AcousticSpace',
+    customBrandingLogoText: '3D Forensics',
+    spectrogramLayers: {
+      showPitchContour: true,
+      showHarmonics: true,
+      showVocoderMarkers: true,
+    },
+    roomSettings: {
+      lengthMeters: 6.5,
+      widthMeters: 5.0,
+      heightMeters: 3.2,
+      material: 'Concrete',
+      absorptionCoefficient: 0.02,
+    }
+  });
+
+  const handleUpdateSettings = (updated: Partial<AnalysisSettings>) => {
+    setSettings(prev => ({ ...prev, ...updated }));
+  };
+
+  // Initialize data on mount & Firebase auth / share link handling
   useEffect(() => {
     async function loadInitialData() {
       try {
-        const health = await fetchHealth();
-        setGeminiActive(health.geminiActive);
+        await initAuthSession().catch(err => console.warn('Auth session init warning:', err));
 
-        const samples = await fetchBenchmarkSamples();
-        setBenchmarkSamples(samples);
+        try {
+          const health = await fetchHealth();
+          setGeminiActive(health.geminiActive);
+        } catch (e) {
+          console.warn('Health check fallback:', e);
+        }
 
-        const history = await fetchHistory();
-        setHistoryItems(history);
+        try {
+          const samples = await fetchBenchmarkSamples();
+          setBenchmarkSamples(samples);
+        } catch (e) {
+          console.warn('Samples fetch fallback:', e);
+        }
+
+        let history: AnalysisHistoryItem[] = [];
+        try {
+          history = await fetchHistory();
+          setHistoryItems(history);
+        } catch (e) {
+          console.warn('History fetch fallback:', e);
+        }
+
+        // Check for Firebase Cloud Share URL parameter (?share=xyz)
+        const params = new URLSearchParams(window.location.search);
+        const shareId = params.get('share');
+        if (shareId) {
+          try {
+            const sharedReport = await fetchReportByShareId(shareId);
+            if (sharedReport) {
+              setCurrentReport(sharedReport);
+              setActiveTab('dashboard');
+              return;
+            }
+          } catch (e) {
+            console.warn('Share report fetch fallback:', e);
+          }
+        }
 
         // Load initial seed report if available
         if (history.length > 0) {
-          const firstReport = await fetchReportById(history[0].id);
-          setCurrentReport(firstReport);
+          try {
+            const firstReport = await fetchReportById(history[0].id);
+            setCurrentReport(firstReport);
+          } catch (e) {
+            console.warn('First report fetch fallback:', e);
+          }
         }
       } catch (err) {
-        console.error('Initialization error:', err);
+        console.warn('Initialization notice:', err);
       }
     }
     loadInitialData();
   }, []);
 
   // Handlers for analysis
-  const handleAnalyzeFile = async (file: File) => {
+  const handleAnalyzeFile = async (file: File, optionsExtra?: any) => {
     setIsLoading(true);
     try {
-      const report = await analyzeFileUpload(file);
+      const report = await analyzeFileUpload(file, {
+        sensitivityThreshold: settings.sensitivityThreshold,
+        noiseReductionEnabled: settings.noiseReductionEnabled,
+        ...optionsExtra
+      });
       setCurrentReport(report);
       setActiveTab('dashboard');
       const history = await fetchHistory();
@@ -172,10 +392,14 @@ export default function App() {
     }
   };
 
-  const handleAnalyzeSample = async (sampleId: string) => {
+  const handleAnalyzeSample = async (sampleId: string, optionsExtra?: any) => {
     setIsLoading(true);
     try {
-      const report = await analyzeBenchmarkSample(sampleId);
+      const report = await analyzeBenchmarkSample(sampleId, {
+        sensitivityThreshold: settings.sensitivityThreshold,
+        noiseReductionEnabled: settings.noiseReductionEnabled,
+        ...optionsExtra
+      });
       setCurrentReport(report);
       setActiveTab('dashboard');
       const history = await fetchHistory();
@@ -190,7 +414,10 @@ export default function App() {
   const handleAnalyzeMic = async (audioBase64: string, fileName?: string, isFake?: boolean) => {
     setIsLoading(true);
     try {
-      const report = await analyzeMicrophoneRecording(audioBase64, fileName, isFake);
+      const report = await analyzeMicrophoneRecording(audioBase64, fileName, isFake, {
+        sensitivityThreshold: settings.sensitivityThreshold,
+        noiseReductionEnabled: settings.noiseReductionEnabled
+      });
       setCurrentReport(report);
       setActiveTab('dashboard');
       const history = await fetchHistory();
@@ -199,6 +426,37 @@ export default function App() {
       alert('Recording analysis failed: ' + (err.message || 'Unknown error'));
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const handleSliceScan = async (sliceRange: { start: number; end: number }) => {
+    if (!currentReport) return;
+    setIsLoading(true);
+    try {
+      if (currentReport.sampleId) {
+        await handleAnalyzeSample(currentReport.sampleId, { sliceRange });
+      } else {
+        // Run with current report sample or mic
+        const report = await analyzeBenchmarkSample('elevenlabs_synth_1', {
+          sensitivityThreshold: settings.sensitivityThreshold,
+          noiseReductionEnabled: settings.noiseReductionEnabled,
+          sliceRange
+        });
+        setCurrentReport(report);
+      }
+    } catch (err: any) {
+      console.error('Slice scan failed:', err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleBatchCompleted = async (newReports: ForensicReport[]) => {
+    if (newReports.length > 0) {
+      setCurrentReport(newReports[newReports.length - 1]);
+      setActiveTab('dashboard');
+      const history = await fetchHistory();
+      setHistoryItems(history);
     }
   };
 
@@ -226,7 +484,14 @@ export default function App() {
   };
 
   return (
-    <div className={`min-h-screen bg-glass-gradient ${currentTheme === 'theme-light' ? 'text-slate-900' : 'text-slate-100'} flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950 relative overflow-hidden ${currentTheme}`}>
+    <div className={`min-h-screen bg-glass-gradient ${settings.themeMode === 'light' ? 'text-slate-900' : 'text-slate-100'} flex flex-col font-sans selection:bg-cyan-500 selection:text-slate-950 relative overflow-hidden theme-${settings.themeMode}`}>
+      {/* Cool Opening Splash Animation on Website Load */}
+      <AnimatePresence>
+        {isSplashShowing && (
+          <OpeningSplash onComplete={() => setIsSplashShowing(false)} />
+        )}
+      </AnimatePresence>
+
       {/* Interactive 3D Ambient Particle Background */}
       <ParticleBackground3D />
 
@@ -236,6 +501,18 @@ export default function App() {
         setActiveTab={setActiveTab}
         geminiActive={geminiActive}
         historyCount={historyItems.length}
+        onOpenBulkScanner={() => setIsBulkScannerOpen(true)}
+        onOpenSettings={() => setIsSettingsOpen(true)}
+        onOpenAuth={() => setIsAuthOpen(true)}
+        currentUser={currentUser}
+        onOpenHowItWorks={() => setIsHowItWorksOpen(true)}
+        themeMode={settings.themeMode}
+        onToggleTheme={() =>
+          handleUpdateSettings({
+            themeMode: settings.themeMode === 'light' ? 'cyberpunk' : 'light'
+          })
+        }
+        customBrandingName={settings.customBrandingName}
       />
 
       <div className="flex flex-1 overflow-hidden">
@@ -244,48 +521,6 @@ export default function App() {
           {/* Ambient 3D Dynamic Floating Light Nodes */}
           <div className="absolute top-10 left-1/4 w-96 h-96 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none animate-float-3d" />
           <div className="absolute bottom-20 right-10 w-80 h-80 bg-purple-500/10 rounded-full blur-3xl pointer-events-none animate-float-3d" style={{ animationDelay: '3s' }} />
-
-          {/* Back to Portal Bar when inside a module */}
-          {activeTab !== 'home' && (
-            <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3 p-2 rounded-2xl bg-slate-900/80 border border-white/10 backdrop-blur-xl">
-              <button
-                onClick={() => setActiveTab('home')}
-                className="px-4 py-2 rounded-xl bg-cyan-500/20 hover:bg-cyan-500/30 text-cyan-300 border border-cyan-400/40 text-xs font-extrabold flex items-center justify-center space-x-2 transition-all cursor-pointer shadow-md"
-              >
-                <ArrowLeft className="w-4 h-4" />
-                <span>← Back to Main Portal</span>
-              </button>
-
-              <div className="flex items-center space-x-1.5 overflow-x-auto max-w-full pb-1 sm:pb-0">
-                {[
-                  { id: 'dashboard', label: 'Forensic Inspector', icon: Activity },
-                  { id: 'live-mic', label: 'Live Mic', icon: Mic },
-                  { id: 'compare', label: 'Dual Inspector', icon: ArrowLeftRight },
-                  { id: 'benchmarks', label: 'DFBench', icon: Database },
-                  { id: 'history', label: 'History', icon: History, badge: historyItems.length },
-                  { id: 'reports', label: 'Reports', icon: FileText },
-                  { id: 'docs', label: 'Physics', icon: HelpCircle },
-                ].map((mod) => {
-                  const Icon = mod.icon;
-                  const isActive = activeTab === mod.id;
-                  return (
-                    <button
-                      key={mod.id}
-                      onClick={() => setActiveTab(mod.id)}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-bold flex items-center space-x-1.5 whitespace-nowrap cursor-pointer transition-all border ${
-                        isActive
-                          ? 'bg-cyan-500 text-white border-cyan-400 shadow-md shadow-cyan-500/30'
-                          : 'bg-white/5 text-slate-300 hover:text-white hover:bg-white/10 border-white/10'
-                      }`}
-                    >
-                      <Icon className="w-3.5 h-3.5" />
-                      <span>{mod.label}</span>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
-          )}
 
           <AnimatePresence mode="wait">
             <motion.div
@@ -317,8 +552,8 @@ export default function App() {
                     {[
                       {
                         id: 'dashboard',
-                        title: 'Forensic Inspector',
-                        desc: 'Primary 3D acoustic inspection engine for Room Impulse Response (RIR) & human breathing cadence analysis.',
+                        title: 'Forensic Analysis',
+                        desc: 'Primary 3D acoustic inspection engine for Room Impulse Response (RIR), human breathing cadence & bulk multi-audio scanning.',
                         icon: Activity,
                         color: 'from-cyan-500 via-blue-600 to-indigo-600',
                         badge: 'Core Engine'
@@ -370,13 +605,28 @@ export default function App() {
                         icon: HelpCircle,
                         color: 'from-indigo-500 via-purple-600 to-pink-600',
                         badge: 'Docs'
+                      },
+                      {
+                        id: 'how-it-works',
+                        title: 'How It Works Pipeline',
+                        desc: 'Interactive 5-stage pipeline walkthrough from acoustic signal extraction to certified forensic reports.',
+                        icon: Sparkles,
+                        color: 'from-cyan-400 via-teal-500 to-emerald-600',
+                        badge: 'Walkthrough',
+                        isAction: () => setIsHowItWorksOpen(true)
                       }
                     ].map((mod) => {
                       const Icon = mod.icon;
                       return (
                         <button
                           key={mod.id}
-                          onClick={() => setActiveTab(mod.id)}
+                          onClick={() => {
+                            if (mod.isAction) {
+                              mod.isAction();
+                            } else {
+                              setActiveTab(mod.id);
+                            }
+                          }}
                           className="group relative text-left p-6 rounded-3xl bg-slate-900/90 hover:bg-slate-800/90 border border-white/15 hover:border-cyan-400/60 shadow-2xl transition-all duration-300 hover:scale-[1.02] cursor-pointer flex flex-col justify-between space-y-4 overflow-hidden"
                         >
                           <div className={`absolute top-0 right-0 w-32 h-32 bg-gradient-to-bl ${mod.color} opacity-10 rounded-bl-full pointer-events-none group-hover:opacity-25 transition-opacity`} />
@@ -414,7 +664,9 @@ export default function App() {
                   onAnalyzeFile={handleAnalyzeFile}
                   onAnalyzeSample={handleAnalyzeSample}
                   onAnalyzeMic={handleAnalyzeMic}
+                  onOpenBulkScanner={() => setIsBulkScannerOpen(true)}
                   onOpenExportModal={() => setIsExportModalOpen(true)}
+                  onSliceScan={handleSliceScan}
                 />
               )}
 
@@ -466,6 +718,40 @@ export default function App() {
           onClose={() => setIsExportModalOpen(false)}
         />
       )}
+
+      {/* Bulk Audio Batch Scanner Modal */}
+      {isBulkScannerOpen && (
+        <BulkScannerModal
+          isOpen={isBulkScannerOpen}
+          onClose={() => setIsBulkScannerOpen(false)}
+          onBatchCompleted={handleBatchCompleted}
+        />
+      )}
+
+      {/* Settings Modal */}
+      {isSettingsOpen && (
+        <SettingsModal
+          isOpen={isSettingsOpen}
+          onClose={() => setIsSettingsOpen(false)}
+          settings={settings}
+          onUpdateSettings={handleUpdateSettings}
+        />
+      )}
+
+      {/* Auth / Sign In Modal */}
+      <AuthModal
+        isOpen={isAuthOpen}
+        onClose={() => setIsAuthOpen(false)}
+        currentUser={currentUser}
+        onLoginSuccess={(email) => setCurrentUser({ email })}
+        onLogout={() => setCurrentUser(null)}
+      />
+
+      {/* How It Works Pipeline Modal */}
+      <HowItWorksModal
+        isOpen={isHowItWorksOpen}
+        onClose={() => setIsHowItWorksOpen(false)}
+      />
     </div>
   );
 }

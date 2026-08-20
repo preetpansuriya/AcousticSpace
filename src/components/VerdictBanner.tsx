@@ -5,7 +5,7 @@ import { ForensicReport } from '../types';
 
 interface VerdictBannerProps {
   report: ForensicReport;
-  onOpenExportModal: () => void;
+  onOpenExportModal?: () => void;
 }
 
 export const VerdictBanner: React.FC<VerdictBannerProps> = ({ report, onOpenExportModal }) => {
@@ -56,14 +56,14 @@ export const VerdictBanner: React.FC<VerdictBannerProps> = ({ report, onOpenExpo
 
           <div className="space-y-1.5">
             <div className="flex items-center space-x-3">
-              <span className={`text-[11px] font-black uppercase tracking-widest px-3.5 py-1 rounded-full border backdrop-blur-md shadow-md ${
+              <span className={`text-[12px] font-black uppercase tracking-widest px-4 py-1.5 rounded-full border backdrop-blur-md shadow-lg ${
                 isSpoof
-                  ? 'bg-red-500/20 text-red-300 border-red-500/50'
+                  ? 'bg-rose-500/30 text-rose-200 border-rose-500/80 shadow-rose-500/30 ring-2 ring-rose-500/40'
                   : isSuspicious
-                  ? 'bg-amber-500/20 text-amber-300 border-amber-500/50'
-                  : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/50'
+                  ? 'bg-amber-500/30 text-amber-200 border-amber-500/80 shadow-amber-500/30'
+                  : 'bg-emerald-500/30 text-emerald-200 border-emerald-500/80 shadow-emerald-500/30 ring-2 ring-emerald-500/40'
               }`}>
-                {report.verdict.replace('_', ' ')}
+                {isSpoof ? '🔴 FAKE AUDIO (AI DEEPFAKE CLONE)' : isSuspicious ? '🟡 SUSPICIOUS SYNTHETIC VOICE' : '🟢 REAL AUDIO (AUTHENTIC HUMAN)'}
               </span>
               <span className="text-xs text-slate-300 font-mono font-medium glass-pill px-2.5 py-0.5 rounded-full border border-white/10">
                 Scan ID: {report.id}
@@ -71,7 +71,7 @@ export const VerdictBanner: React.FC<VerdictBannerProps> = ({ report, onOpenExpo
             </div>
 
             <h1 className="text-2xl font-black text-white tracking-tight drop-shadow-md">
-              {isSpoof ? 'Synthetic Audio / Deepfake Detected' : isSuspicious ? 'Suspicious Synthetic Splicing Detected' : 'Authentic Human Speech Verified'}
+              {isSpoof ? 'FAKE VOICE DETECTED — Synthetic AI Deepfake' : isSuspicious ? 'SUSPICIOUS VOICE — Synthetic AI Splicing' : 'REAL VOICE VERIFIED — Authentic Human Recording'}
             </h1>
 
             <p className="text-xs text-slate-200 max-w-2xl leading-relaxed font-medium">

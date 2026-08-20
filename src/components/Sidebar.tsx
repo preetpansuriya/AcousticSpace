@@ -12,7 +12,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, histo
   const menuItems = [
     {
       id: 'dashboard',
-      label: 'Forensic Inspector',
+      label: 'Forensic Analysis',
       icon: Activity,
       description: 'Audio upload, RIR analyzer & waveform'
     },

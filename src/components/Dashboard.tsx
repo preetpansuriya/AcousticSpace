@@ -94,7 +94,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
       {currentReport && (
         <div className="space-y-6">
           {/* Verdict Banner */}
-          <VerdictBanner report={currentReport} />
+          <VerdictBanner report={currentReport} onOpenExportModal={onOpenExportModal} />
 
           {/* Interactive Waveform Viewer */}
           <WaveformViewer report={currentReport} />
@@ -106,7 +106,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
           </div>
 
           {/* Breathing Respiration Timeline */}
-          <BreathingTimeline breathing={currentReport.breathing} />
+          <BreathingTimeline breathing={currentReport.breathing} durationSeconds={currentReport.durationSeconds} />
         </div>
       )}
     </div>
