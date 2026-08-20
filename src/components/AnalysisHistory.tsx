@@ -31,7 +31,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({
           </p>
         ) : (
           history.map((item) => {
-            const isFake = item.verdict === 'DEEPFAKE_DETECTED';
+            const isFake = item.verdict === 'DEEPFAKE_SPOOF' || item.verdict === 'SUSPICIOUS_SYNTHETIC';
             return (
               <div
                 key={item.id}
@@ -48,7 +48,7 @@ export const AnalysisHistory: React.FC<AnalysisHistoryProps> = ({
                   </div>
                   <div>
                     <h4 className="text-sm font-semibold text-slate-200 group-hover:text-purple-300 transition-colors">
-                      {item.filename}
+                      {item.fileName}
                     </h4>
                     <span className="text-[11px] text-slate-400 font-mono">
                       {item.timestamp}
