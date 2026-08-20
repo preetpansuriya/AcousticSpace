@@ -499,7 +499,7 @@ export const ReportsPage: React.FC<ReportsPageProps> = ({ currentReport, onOpenE
         </div>
       ) : (
         <div className="glass-panel rounded-3xl p-12 text-center text-slate-400 text-xs font-medium border border-white/10 backdrop-blur-2xl">
-          No report selected. Upload or analyze an audio clip in the Forensic Inspector to generate a brief.
+          No report selected. Upload or analyze an audio clip in Forensic Analysis to generate a brief.
         </div>
       )}
     </div>
