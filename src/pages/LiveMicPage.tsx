@@ -297,14 +297,14 @@ export const LiveMicPage: React.FC<LiveMicPageProps> = ({
 
       {/* Latest Live Analysis Result */}
       {currentReport && (
-        <Card3D glowColor={currentReport.verdict === 'DEEPFAKE_DETECTED' ? 'rose' : 'emerald'} className="p-6 space-y-4">
+        <Card3D glowColor={currentReport.verdict === 'DEEPFAKE_SPOOF' ? 'rose' : 'emerald'} className="p-6 space-y-4">
           <div className="flex items-center justify-between border-b border-white/10 pb-3">
             <h3 className="text-sm font-bold text-slate-100 flex items-center space-x-2">
               <CheckCircle2 className="w-4 h-4 text-emerald-400" />
               <span>Inspection Result: {currentReport.fileName}</span>
             </h3>
             <span className={`text-xs font-extrabold px-3 py-1 rounded-full border ${
-              currentReport.verdict === 'DEEPFAKE_DETECTED'
+              currentReport.verdict === 'DEEPFAKE_SPOOF'
                 ? 'bg-red-500/20 text-red-300 border-red-500/40'
                 : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
             }`}>
@@ -328,7 +328,7 @@ export const LiveMicPage: React.FC<LiveMicPageProps> = ({
             <div className="bg-white/5 p-3 rounded-xl border border-white/10">
               <span className="text-slate-400">Missing Breathing Ratio:</span>
               <p className="text-lg font-mono font-extrabold text-amber-300 mt-1">
-                {currentReport.breathing.missingBreathRatio * 100}%
+                {((currentReport.breathing.missingBreathRatio ?? (currentReport.breathing.unnaturalPauseRatio / 100)) * 100).toFixed(0)}%
               </p>
             </div>
           </div>
