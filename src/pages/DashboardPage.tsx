@@ -8,6 +8,8 @@ import { SpectrogramCanvas } from '../components/SpectrogramCanvas';
 import { RirVisualizer } from '../components/RirVisualizer';
 import { BreathingTimeline } from '../components/BreathingTimeline';
 import { ThreeAcousticScene } from '../components/ThreeAcousticScene';
+import { SpeakerDiarizationPanel } from '../components/SpeakerDiarizationPanel';
+import { WatermarkCard } from '../components/WatermarkCard';
 import { Info } from 'lucide-react';
 
 interface DashboardPageProps {
@@ -17,6 +19,8 @@ interface DashboardPageProps {
   onAnalyzeFile: (file: File) => void;
   onAnalyzeSample: (sampleId: string) => void;
   onAnalyzeMic: (audioBase64: string, fileName?: string, isFake?: boolean) => void;
+  onOpenBulkScanner?: () => void;
+  onSliceScan?: (range: { start: number; end: number }) => void;
   onOpenExportModal: () => void;
 }
 
@@ -27,6 +31,8 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
   onAnalyzeFile,
   onAnalyzeSample,
   onAnalyzeMic,
+  onOpenBulkScanner,
+  onSliceScan,
   onOpenExportModal
 }) => {
   return (
@@ -36,6 +42,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
         onAnalyzeFile={onAnalyzeFile}
         onAnalyzeSample={onAnalyzeSample}
         onAnalyzeMic={onAnalyzeMic}
+        onOpenBulkScanner={onOpenBulkScanner}
         benchmarkSamples={benchmarkSamples}
         isLoading={isLoading}
       />
@@ -46,7 +53,7 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
           <div className="w-12 h-12 rounded-full border-4 border-cyan-400 border-t-transparent animate-spin mx-auto shadow-lg shadow-cyan-500/30"></div>
           <h3 className="text-base font-bold text-slate-100">Running AcousticSpace Forensic Pipeline...</h3>
           <p className="text-xs text-slate-300 font-mono max-w-md mx-auto leading-relaxed">
-            Extracting low-level acoustic features, estimating Room Impulse Response (RIR) wall reflections, analyzing diaphragm breathing pauses, and querying Gemini AI reasoning engine.
+            Extracting low-level acoustic features, estimating Room Impulse Response (RIR) wall reflections, analyzing diaphragm breathing pauses, running speaker diarization, verifying digital watermarks, and querying Gemini AI reasoning engine.
           </p>
         </div>
       )}
@@ -60,13 +67,22 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             onOpenExportModal={onOpenExportModal}
           />
 
+          {/* Digital AI Watermark Verification Card */}
+          <WatermarkCard watermarkInfo={currentReport.watermarkInfo} />
+
           {/* Interactive Waveform Scrubbing Player & Viewer */}
           <WaveformPlayer report={currentReport} />
+
+          {/* Multi-Speaker Diarization Panel */}
+          <SpeakerDiarizationPanel
+            segments={currentReport.speakerDiarization}
+            durationSeconds={currentReport.durationSeconds}
+          />
 
           {/* 3D Interactive Acoustic WebGL Neural Canvas */}
           <ThreeAcousticScene
             verdict={currentReport.verdict}
-            syntheticProbability={currentReport.syntheticProbability}
+            syntheticProbability={currentReport.overallDeepfakeProbability ? currentReport.overallDeepfakeProbability / 100 : 0.97}
             reflectionMismatchScore={currentReport.rir.reflectionMismatchScore}
           />
 
@@ -76,11 +92,13 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
             <RirVisualizer rir={currentReport.rir} />
           </div>
 
-          {/* Spectrogram & Phase Heatmap */}
+          {/* Spectrogram & Slice Analyzer */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <SpectrogramCanvas
               spectral={currentReport.spectral}
               spectrogramMatrix={currentReport.spectrogramData}
+              durationSeconds={currentReport.durationSeconds}
+              onSliceScan={onSliceScan}
             />
 
             {/* Key Findings Card */}
@@ -120,4 +138,3 @@ export const DashboardPage: React.FC<DashboardPageProps> = ({
     </div>
   );
 };
-

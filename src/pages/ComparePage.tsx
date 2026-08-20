@@ -117,7 +117,7 @@ export const ComparePage: React.FC<ComparePageProps> = ({ benchmarkSamples }) =>
               className="w-full bg-slate-900/90 border border-white/20 text-xs text-slate-100 rounded-xl p-3 focus:outline-none focus:border-cyan-400"
             >
               {benchmarkSamples.map(s => (
-                <option key={s.id} value={s.id} className="bg-slate-900 text-slate-100">{s.name} ({s.sourceDataset})</option>
+                <option key={s.id} value={s.id} className="bg-slate-900 text-slate-100">{s.title} ({s.datasetName})</option>
               ))}
             </select>
           </div>
@@ -125,9 +125,9 @@ export const ComparePage: React.FC<ComparePageProps> = ({ benchmarkSamples }) =>
           {reportA && (
             <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-200">{reportA.audioFileName}</span>
+                <span className="text-xs font-bold text-slate-200">{reportA.fileName}</span>
                 <span className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border ${
-                  reportA.verdict === 'SPOOF_SYNTHETIC' ? 'bg-red-500/20 text-red-300 border-red-500/40' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                  reportA.verdict === 'DEEPFAKE_SPOOF' ? 'bg-red-500/20 text-red-300 border-red-500/40' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
                 }`}>
                   {reportA.verdict}
                 </span>
@@ -172,7 +172,7 @@ export const ComparePage: React.FC<ComparePageProps> = ({ benchmarkSamples }) =>
               className="w-full bg-slate-900/90 border border-white/20 text-xs text-slate-100 rounded-xl p-3 focus:outline-none focus:border-purple-400"
             >
               {benchmarkSamples.map(s => (
-                <option key={s.id} value={s.id} className="bg-slate-900 text-slate-100">{s.name} ({s.sourceDataset})</option>
+                <option key={s.id} value={s.id} className="bg-slate-900 text-slate-100">{s.title} ({s.datasetName})</option>
               ))}
             </select>
           </div>
@@ -180,9 +180,9 @@ export const ComparePage: React.FC<ComparePageProps> = ({ benchmarkSamples }) =>
           {reportB && (
             <div className="p-4 rounded-2xl bg-slate-900/80 border border-white/10 space-y-2">
               <div className="flex items-center justify-between">
-                <span className="text-xs font-bold text-slate-200">{reportB.audioFileName}</span>
+                <span className="text-xs font-bold text-slate-200">{reportB.fileName}</span>
                 <span className={`text-[10px] font-black uppercase px-2.5 py-0.5 rounded-full border ${
-                  reportB.verdict === 'SPOOF_SYNTHETIC' ? 'bg-red-500/20 text-red-300 border-red-500/40' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
+                  reportB.verdict === 'DEEPFAKE_SPOOF' ? 'bg-red-500/20 text-red-300 border-red-500/40' : 'bg-emerald-500/20 text-emerald-300 border-emerald-500/40'
                 }`}>
                   {reportB.verdict}
                 </span>
