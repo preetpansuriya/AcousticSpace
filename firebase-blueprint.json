@@ -1,0 +1,22 @@
+{
+  "entities": {
+    "reports": {
+      "title": "Forensic Scan Reports",
+      "description": "Stored acoustic forensic reports and scan results",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string" },
+        "filename": { "type": "string" },
+        "duration": { "type": "number" },
+        "verdict": { "type": "string" },
+        "confidence": { "type": "number" },
+        "syntheticProbability": { "type": "number" },
+        "createdAt": { "type": "string" },
+        "userId": { "type": "string" },
+        "shareId": { "type": "string" },
+        "reportData": { "type": "string" }
+      },
+      "required": ["id", "filename", "verdict", "createdAt"]
+    }
+  }
+}
