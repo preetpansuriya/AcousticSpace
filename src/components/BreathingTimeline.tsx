@@ -5,10 +5,10 @@ import { Card3D } from './Card3D';
 
 interface BreathingTimelineProps {
   breathing: BreathingMetrics;
-  durationSeconds: number;
+  durationSeconds?: number;
 }
 
-export const BreathingTimeline: React.FC<BreathingTimelineProps> = ({ breathing, durationSeconds }) => {
+export const BreathingTimeline: React.FC<BreathingTimelineProps> = ({ breathing, durationSeconds = 10 }) => {
   const isHealthy = breathing.diaphragmRechargePresent && breathing.cadenceSynchronyScore > 60;
 
   return (

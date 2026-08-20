@@ -17,11 +17,28 @@ export const ThreeAcousticScene: React.FC<ThreeAcousticSceneProps> = ({
   isPlaying = false,
 }) => {
   const mountRef = useRef<HTMLDivElement | null>(null);
-  const [viewMode, setViewMode] = useState<'sphere' | 'room' | 'landscape'>('sphere');
+  const [viewMode, setViewMode] = useState<'sphere' | 'room' | 'landscape'>('room');
   const [autoRotate360, setAutoRotate360] = useState(false);
   const [rotateSpeed, setRotateSpeed] = useState<number>(1); // 0.5x, 1x, 2x, 3x
   const [currentYawDegrees, setCurrentYawDegrees] = useState<number>(0);
   const [currentPitchDegrees, setCurrentPitchDegrees] = useState<number>(0);
+
+  // 3D Room Customizer State
+  const [roomLength, setRoomLength] = useState<number>(6.5);
+  const [roomWidth, setRoomWidth] = useState<number>(5.0);
+  const [roomHeight, setRoomHeight] = useState<number>(3.2);
+  const [wallMaterial, setWallMaterial] = useState<'Concrete' | 'Wood Paneling' | 'Drywall' | 'Glass' | 'Carpeted Studio'>('Concrete');
+
+  const absorptionCoeffs: Record<string, number> = {
+    'Concrete': 0.02,
+    'Wood Paneling': 0.12,
+    'Drywall': 0.08,
+    'Glass': 0.04,
+    'Carpeted Studio': 0.35
+  };
+  const calculatedAbsorption = absorptionCoeffs[wallMaterial] || 0.05;
+  const calculatedVolume = Number((roomLength * roomWidth * roomHeight).toFixed(1));
+  const calculatedRt60 = Number((0.161 * calculatedVolume / (2 * (roomLength*roomWidth + roomLength*roomHeight + roomWidth*roomHeight) * calculatedAbsorption)).toFixed(2));
 
   const isDeepfake = verdict === 'DEEPFAKE_DETECTED';
 
@@ -400,40 +417,6 @@ export const ThreeAcousticScene: React.FC<ThreeAcousticSceneProps> = ({
             </p>
           </div>
         </div>
-
-        {/* View Mode Switcher */}
-        <div className="flex items-center space-x-1 glass-pill p-1 rounded-xl border border-white/10 self-stretch sm:self-auto justify-center">
-          <button
-            onClick={() => setViewMode('sphere')}
-            className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-              viewMode === 'sphere'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            3D Sphere Mesh
-          </button>
-          <button
-            onClick={() => setViewMode('room')}
-            className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-              viewMode === 'room'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            3D Room Impulse
-          </button>
-          <button
-            onClick={() => setViewMode('landscape')}
-            className={`px-2.5 py-1 rounded-lg text-[10px] font-bold transition-all ${
-              viewMode === 'landscape'
-                ? 'bg-gradient-to-r from-cyan-500 to-blue-600 text-white shadow-md'
-                : 'text-slate-400 hover:text-white'
-            }`}
-          >
-            3D Spectrum Grid
-          </button>
-        </div>
       </div>
 
       {/* 360 Animation Interactive Toolbar */}
@@ -511,6 +494,88 @@ export const ThreeAcousticScene: React.FC<ThreeAcousticSceneProps> = ({
           <span>Click & Drag to rotate 360° manually</span>
         </div>
       </div>
+
+      {/* 3D Room Customizer Settings Panel */}
+      {viewMode === 'room' && (
+        <div className="glass-panel p-4 rounded-2xl border border-white/10 space-y-3">
+          <div className="flex items-center justify-between border-b border-white/10 pb-2">
+            <span className="text-xs font-bold text-slate-100 flex items-center space-x-2">
+              <span className="w-2 h-2 rounded-full bg-cyan-400"></span>
+              <span>3D Acoustic Room Physical Parameters Customizer</span>
+            </span>
+            <span className="text-[10px] font-mono font-bold text-amber-300 glass-pill px-2.5 py-0.5 rounded-full border border-amber-400/30">
+              Est. RT60: {calculatedRt60}s | Vol: {calculatedVolume}m³
+            </span>
+          </div>
+
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs">
+            <div>
+              <label className="text-[11px] font-bold text-slate-300 flex justify-between">
+                <span>Room Length:</span>
+                <span className="font-mono text-cyan-300">{roomLength}m</span>
+              </label>
+              <input
+                type="range"
+                min={3}
+                max={20}
+                step={0.5}
+                value={roomLength}
+                onChange={(e) => setRoomLength(Number(e.target.value))}
+                className="w-full accent-cyan-400 cursor-pointer mt-1"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-300 flex justify-between">
+                <span>Room Width:</span>
+                <span className="font-mono text-cyan-300">{roomWidth}m</span>
+              </label>
+              <input
+                type="range"
+                min={3}
+                max={15}
+                step={0.5}
+                value={roomWidth}
+                onChange={(e) => setRoomWidth(Number(e.target.value))}
+                className="w-full accent-cyan-400 cursor-pointer mt-1"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-300 flex justify-between">
+                <span>Room Height:</span>
+                <span className="font-mono text-cyan-300">{roomHeight}m</span>
+              </label>
+              <input
+                type="range"
+                min={2.5}
+                max={8}
+                step={0.5}
+                value={roomHeight}
+                onChange={(e) => setRoomHeight(Number(e.target.value))}
+                className="w-full accent-cyan-400 cursor-pointer mt-1"
+              />
+            </div>
+
+            <div>
+              <label className="text-[11px] font-bold text-slate-300 block mb-1">
+                <span>Wall Material:</span>
+              </label>
+              <select
+                value={wallMaterial}
+                onChange={(e) => setWallMaterial(e.target.value as any)}
+                className="w-full bg-slate-900 border border-white/20 text-xs text-slate-100 rounded-xl p-1.5 font-sans focus:outline-none focus:border-cyan-400 cursor-pointer"
+              >
+                <option value="Concrete">Concrete (Abs: 0.02)</option>
+                <option value="Wood Paneling">Wood Paneling (Abs: 0.12)</option>
+                <option value="Drywall">Drywall (Abs: 0.08)</option>
+                <option value="Glass">Glass Windows (Abs: 0.04)</option>
+                <option value="Carpeted Studio">Carpeted Studio (Abs: 0.35)</option>
+              </select>
+            </div>
+          </div>
+        </div>
+      )}
     </Card3D>
   );
 };

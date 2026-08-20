@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Upload, Mic, MicOff, Database, Play, Loader2, FileAudio } from 'lucide-react';
+import { Upload, Mic, MicOff, Database, Play, Loader2, FileAudio, CheckCircle2, ShieldCheck, Sparkles, Layers } from 'lucide-react';
 import { BenchmarkSample } from '../types';
 import { Card3D } from './Card3D';
 
@@ -7,6 +7,7 @@ interface AudioUploaderProps {
   onAnalyzeFile: (file: File) => void;
   onAnalyzeSample: (sampleId: string) => void;
   onAnalyzeMic: (audioBase64: string, fileName?: string, isFake?: boolean) => void;
+  onOpenBulkScanner?: () => void;
   benchmarkSamples: BenchmarkSample[];
   isLoading: boolean;
 }
@@ -15,9 +16,12 @@ export const AudioUploader: React.FC<AudioUploaderProps> = ({
   onAnalyzeFile,
   onAnalyzeSample,
   onAnalyzeMic,
+  onOpenBulkScanner,
   benchmarkSamples,
   isLoading
 }) => {
+  const [activeInputTab, setActiveInputTab] = useState<'upload' | 'mic' | 'benchmark'>('upload');
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [selectedSampleId, setSelectedSampleId] = useState<string>('dfbench_speech25_01');
   const [isRecording, setIsRecording] = useState<boolean>(false);
   const [recordTime, setRecordTime] = useState<number>(0);
@@ -46,6 +50,7 @@ export const AudioUploader: React.FC<AudioUploaderProps> = ({
     if (e.dataTransfer.files && e.dataTransfer.files[0]) {
       const file = e.dataTransfer.files[0];
       if (file.type.startsWith('audio/') || file.name.match(/\.(wav|mp3|flac|ogg|m4a|aac)$/i)) {
+        setSelectedFile(file);
         onAnalyzeFile(file);
       }
     }
@@ -53,7 +58,9 @@ export const AudioUploader: React.FC<AudioUploaderProps> = ({
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      onAnalyzeFile(e.target.files[0]);
+      const file = e.target.files[0];
+      setSelectedFile(file);
+      onAnalyzeFile(file);
     }
   };
 
@@ -104,123 +111,213 @@ export const AudioUploader: React.FC<AudioUploaderProps> = ({
 
   return (
     <Card3D glowColor="cyan" className="p-6 space-y-5">
-      <div className="flex items-center justify-between border-b border-white/10 pb-3">
-        <h2 className="text-sm font-bold text-slate-100 flex items-center space-x-2">
-          <FileAudio className="w-4 h-4 text-cyan-400" />
-          <span>Select or Record Audio Track</span>
-        </h2>
-        <span className="text-xs text-slate-400 font-mono font-medium bg-white/5 px-2.5 py-1 rounded-full border border-white/10">22.05kHz / 16-bit PCM</span>
-      </div>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
-        {/* 1. Drag & Drop File Upload */}
-        <div
-          id="dropzone-upload"
-          onDragOver={handleDragOver}
-          onDragLeave={handleDragLeave}
-          onDrop={handleDrop}
-          onClick={() => fileInputRef.current?.click()}
-          className={`cursor-pointer rounded-2xl border-2 border-dashed p-5 flex flex-col items-center justify-center text-center transition-all backdrop-blur-md ${
-            dragActive
-              ? 'border-cyan-400 bg-cyan-500/20 text-cyan-200 shadow-lg shadow-cyan-500/20'
-              : 'border-white/15 hover:border-cyan-400/60 glass-panel-interactive text-slate-300'
-          }`}
-        >
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileChange}
-            accept="audio/*,.wav,.mp3,.flac,.ogg,.m4a"
-            className="hidden"
-          />
-          <div className="p-3 rounded-2xl bg-cyan-500/20 border border-cyan-400/30 text-cyan-300 mb-2.5 shadow-inner">
-            <Upload className="w-6 h-6" />
+      {/* Console Header & Mode Navigation Tabs */}
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 border-b border-white/10 pb-4">
+        <div className="flex items-center space-x-3">
+          <div className="p-2.5 rounded-xl bg-cyan-500/20 border border-cyan-400/30 text-cyan-400">
+            <FileAudio className="w-5 h-5" />
           </div>
-          <p className="text-xs font-bold text-slate-100">
-            Upload Audio Clip
-          </p>
-          <p className="text-[10px] text-slate-400 mt-1">
-            Drag & drop WAV, MP3, FLAC, OGG (Max 25MB)
-          </p>
-        </div>
-
-        {/* 2. Benchmark Preset Dataset Dropdown */}
-        <div className="glass-3d-card rounded-2xl p-5 border border-white/15 flex flex-col justify-between shadow-xl">
           <div>
-            <div className="flex items-center justify-between mb-2.5">
-              <label className="text-xs font-extrabold text-slate-100 flex items-center space-x-2">
-                <Database className="w-4 h-4 text-blue-400" />
-                <span>Benchmark Datasets</span>
-              </label>
-              <span className="text-[10px] text-cyan-300 font-mono font-bold glass-pill px-2.5 py-0.5 rounded-full border border-cyan-400/30">HuggingFace</span>
-            </div>
-
-            <select
-              id="select-benchmark-sample"
-              value={selectedSampleId}
-              onChange={(e) => setSelectedSampleId(e.target.value)}
-              className="w-full bg-slate-900/90 border border-white/20 text-xs text-slate-100 rounded-xl p-2.5 font-sans focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 backdrop-blur-lg cursor-pointer"
-            >
-              {benchmarkSamples.map(sample => (
-                <option key={sample.id} value={sample.id} className="bg-slate-900 text-slate-100">
-                  [{sample.groundTruth}] {sample.title} ({sample.durationSeconds}s)
-                </option>
-              ))}
-            </select>
-
-            <p className="text-[10px] text-slate-300 mt-2.5 line-clamp-2 leading-relaxed font-medium">
-              {benchmarkSamples.find(s => s.id === selectedSampleId)?.description}
+            <h2 className="text-sm font-extrabold text-slate-100 flex items-center space-x-2">
+              <span>Acoustic Audio Forensic Console</span>
+            </h2>
+            <p className="text-[11px] text-slate-400">
+              Upload audio clip for acoustic deepfake inspection & synthetic voice detection
             </p>
           </div>
+        </div>
+
+        {/* Unified Input Sub-tabs & Bulk Scanner Action */}
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center p-1 bg-slate-900/80 rounded-xl border border-white/10">
+            <button
+              id="tab-input-upload"
+              onClick={() => setActiveInputTab('upload')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 ${
+                activeInputTab === 'upload'
+                  ? 'bg-cyan-500/25 text-cyan-300 border border-cyan-400/40 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Upload className="w-3.5 h-3.5" />
+              <span>Upload File</span>
+            </button>
+
+            <button
+              id="tab-input-mic"
+              onClick={() => setActiveInputTab('mic')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 ${
+                activeInputTab === 'mic'
+                  ? 'bg-emerald-500/25 text-emerald-300 border border-emerald-400/40 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Mic className="w-3.5 h-3.5" />
+              <span>Live Mic</span>
+            </button>
+
+            <button
+              id="tab-input-benchmark"
+              onClick={() => setActiveInputTab('benchmark')}
+              className={`px-3.5 py-1.5 rounded-lg text-xs font-bold transition-all flex items-center space-x-1.5 ${
+                activeInputTab === 'benchmark'
+                  ? 'bg-blue-500/25 text-blue-300 border border-blue-400/40 shadow-sm'
+                  : 'text-slate-400 hover:text-slate-200'
+              }`}
+            >
+              <Database className="w-3.5 h-3.5" />
+              <span>Benchmark Dataset</span>
+            </button>
+          </div>
+
+          {onOpenBulkScanner && (
+            <button
+              id="btn-open-bulk-scanner"
+              onClick={onOpenBulkScanner}
+              className="px-3.5 py-2 bg-gradient-to-r from-cyan-500 via-blue-600 to-indigo-600 hover:from-cyan-400 hover:to-indigo-500 text-white font-extrabold text-xs rounded-xl flex items-center space-x-1.5 shadow-lg shadow-cyan-500/25 border border-cyan-400/50 cursor-pointer active:scale-95 transition-all"
+              title="Launch Bulk Multi-Audio Scanner"
+            >
+              <Layers className="w-4 h-4 text-cyan-200" />
+              <span>Bulk Scanner</span>
+            </button>
+          )}
+        </div>
+      </div>
+
+      {/* SINGLE PANEL VIEW: Upload Audio File Focus */}
+      {activeInputTab === 'upload' && (
+        <div className="space-y-4">
+          <div
+            id="dropzone-upload"
+            onDragOver={handleDragOver}
+            onDragLeave={handleDragLeave}
+            onDrop={handleDrop}
+            onClick={() => fileInputRef.current?.click()}
+            className={`cursor-pointer rounded-2xl border-2 border-dashed p-8 flex flex-col items-center justify-center text-center transition-all backdrop-blur-md relative overflow-hidden ${
+              dragActive
+                ? 'border-cyan-400 bg-cyan-500/20 text-cyan-200 shadow-xl shadow-cyan-500/20 scale-[1.01]'
+                : 'border-cyan-400/30 hover:border-cyan-400/80 glass-panel-interactive text-slate-300'
+            }`}
+          >
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+              accept="audio/*,.wav,.mp3,.flac,.ogg,.m4a"
+              className="hidden"
+            />
+
+            <div className="p-4 rounded-2xl bg-cyan-500/20 border border-cyan-400/40 text-cyan-300 mb-3 shadow-lg shadow-cyan-500/10">
+              <Upload className="w-8 h-8 animate-bounce" />
+            </div>
+
+            <p className="text-sm font-extrabold text-slate-100">
+              {selectedFile ? `Selected: ${selectedFile.name}` : 'Drop or Click to Upload Audio File / Call Recording'}
+            </p>
+            <p className="text-xs text-slate-300 mt-1 max-w-md font-medium">
+              Upload call recordings, voice notes, or audio files (WAV, MP3, M4A, FLAC, OGG). The AI engine instantly determines if the voice is <span className="text-emerald-400 font-bold">REAL (Authentic Human)</span> or <span className="text-rose-400 font-bold">FAKE (AI Deepfake / Cloned)</span>.
+            </p>
+
+            <div className="mt-4 flex flex-wrap items-center justify-center gap-2">
+              <span className="text-[10px] font-mono text-cyan-300 bg-cyan-950/60 px-2.5 py-1 rounded-full border border-cyan-500/30">Call Recordings & Voice Notes</span>
+              <span className="text-[10px] font-mono text-emerald-300 bg-emerald-950/60 px-2.5 py-1 rounded-full border border-emerald-500/30">Real Human vs AI Clone</span>
+              <span className="text-[10px] font-mono text-purple-300 bg-purple-950/60 px-2.5 py-1 rounded-full border border-purple-500/30">Gemini 3.6 Forensic AI</span>
+            </div>
+
+            {selectedFile && (
+              <div className="mt-5 pt-3 border-t border-white/10 flex items-center space-x-2 text-xs text-emerald-400 font-bold">
+                <CheckCircle2 className="w-4 h-4" />
+                <span>File loaded successfully ({(selectedFile.size / (1024 * 1024)).toFixed(2)} MB). Analyzing...</span>
+              </div>
+            )}
+          </div>
+
+          <div className="flex items-center justify-between text-[11px] text-slate-400 font-mono px-1">
+            <span className="flex items-center space-x-1 text-cyan-300 font-bold">
+              <ShieldCheck className="w-3.5 h-3.5" />
+              <span>Genuine Acoustic Forensic Engine</span>
+            </span>
+            <span>Max file size: 25MB</span>
+          </div>
+        </div>
+      )}
+
+      {/* SINGLE PANEL VIEW: Benchmark Dataset */}
+      {activeInputTab === 'benchmark' && (
+        <div className="glass-3d-card rounded-2xl p-6 border border-white/15 space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-extrabold text-slate-100 flex items-center space-x-2">
+              <Database className="w-4 h-4 text-blue-400" />
+              <span>Select Benchmark Forensic Sample</span>
+            </label>
+            <span className="text-[10px] text-cyan-300 font-mono font-bold glass-pill px-2.5 py-0.5 rounded-full border border-cyan-400/30">HuggingFace Dataset</span>
+          </div>
+
+          <select
+            id="select-benchmark-sample"
+            value={selectedSampleId}
+            onChange={(e) => setSelectedSampleId(e.target.value)}
+            className="w-full bg-slate-900/90 border border-white/20 text-xs text-slate-100 rounded-xl p-3 font-sans focus:outline-none focus:border-cyan-400 focus:ring-1 focus:ring-cyan-400 backdrop-blur-lg cursor-pointer"
+          >
+            {benchmarkSamples.map(sample => (
+              <option key={sample.id} value={sample.id} className="bg-slate-900 text-slate-100">
+                [{sample.groundTruth}] {sample.title} ({sample.durationSeconds}s)
+              </option>
+            ))}
+          </select>
+
+          <p className="text-xs text-slate-300 leading-relaxed font-medium">
+            {benchmarkSamples.find(s => s.id === selectedSampleId)?.description}
+          </p>
 
           <button
             id="btn-run-benchmark"
             onClick={() => onAnalyzeSample(selectedSampleId)}
             disabled={isLoading}
-            className="mt-4 w-full py-2.5 glass-3d-button text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 shadow-xl transition-all disabled:opacity-50 active:scale-95"
+            className="w-full py-3 glass-3d-button text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 shadow-xl transition-all disabled:opacity-50 active:scale-95"
           >
             {isLoading ? (
               <Loader2 className="w-4 h-4 animate-spin" />
             ) : (
               <>
-                <Play className="w-3.5 h-3.5 fill-current" />
-                <span>Analyze Benchmark Sample</span>
+                <Play className="w-4 h-4 fill-current" />
+                <span>Analyze Selected Benchmark Sample</span>
               </>
             )}
           </button>
         </div>
+      )}
 
-        {/* 3. Live Microphone Recording */}
-        <div className="glass-3d-card rounded-2xl p-5 border border-white/15 flex flex-col justify-between shadow-xl">
-          <div>
-            <div className="flex items-center justify-between mb-2.5">
-              <label className="text-xs font-extrabold text-slate-100 flex items-center space-x-2">
-                <Mic className="w-4 h-4 text-emerald-400" />
-                <span>Live Mic Inspection</span>
-              </label>
-              {isRecording && (
-                <span className="text-[10px] font-mono text-red-400 animate-pulse font-extrabold glass-pill px-2.5 py-0.5 rounded-full border border-red-500/40">
-                  REC: 00:{recordTime < 10 ? '0' + recordTime : recordTime}
-                </span>
-              )}
-            </div>
+      {/* SINGLE PANEL VIEW: Live Microphone */}
+      {activeInputTab === 'mic' && (
+        <div className="glass-3d-card rounded-2xl p-6 border border-white/15 space-y-4">
+          <div className="flex items-center justify-between">
+            <label className="text-xs font-extrabold text-slate-100 flex items-center space-x-2">
+              <Mic className="w-4 h-4 text-emerald-400" />
+              <span>Live Microphone Inspection</span>
+            </label>
+            {isRecording && (
+              <span className="text-[10px] font-mono text-red-400 animate-pulse font-extrabold glass-pill px-2.5 py-0.5 rounded-full border border-red-500/40">
+                REC: 00:{recordTime < 10 ? '0' + recordTime : recordTime}
+              </span>
+            )}
+          </div>
 
-            <p className="text-[10px] text-slate-300 leading-relaxed font-medium">
-              Speak into your microphone to test real-time room impulse response (RIR) and breathing cadence.
-            </p>
+          <p className="text-xs text-slate-300 leading-relaxed font-medium">
+            Speak into your microphone to capture real-time acoustic room impulse response (RIR) and physiological breathing cadence.
+          </p>
 
-            <div className="mt-3 flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="check-simulate-fake"
-                checked={micSimulateFake}
-                onChange={(e) => setMicSimulateFake(e.target.checked)}
-                className="rounded bg-slate-900 border-white/20 text-cyan-500 focus:ring-0 cursor-pointer"
-              />
-              <label htmlFor="check-simulate-fake" className="text-[11px] text-slate-200 font-semibold cursor-pointer">
-                Simulate AI Synthetic Voice Filter
-              </label>
-            </div>
+          <div className="flex items-center space-x-2 pt-1">
+            <input
+              type="checkbox"
+              id="check-simulate-fake"
+              checked={micSimulateFake}
+              onChange={(e) => setMicSimulateFake(e.target.checked)}
+              className="rounded bg-slate-900 border-white/20 text-cyan-500 focus:ring-0 cursor-pointer"
+            />
+            <label htmlFor="check-simulate-fake" className="text-xs text-slate-200 font-semibold cursor-pointer">
+              Apply AI Synthetic Voice Filter Simulation
+            </label>
           </div>
 
           {!isRecording ? (
@@ -228,23 +325,23 @@ export const AudioUploader: React.FC<AudioUploaderProps> = ({
               id="btn-start-mic"
               onClick={startRecording}
               disabled={isLoading}
-              className="mt-4 w-full py-2.5 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/25 ring-1 ring-white/20 active:scale-95"
+              className="w-full py-3 bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 transition-all disabled:opacity-50 shadow-lg shadow-emerald-500/25 ring-1 ring-white/20 active:scale-95"
             >
-              <Mic className="w-3.5 h-3.5" />
-              <span>Record Microphone</span>
+              <Mic className="w-4 h-4" />
+              <span>Start Recording Microphone</span>
             </button>
           ) : (
             <button
               id="btn-stop-mic"
               onClick={stopRecording}
-              className="mt-4 w-full py-2.5 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 animate-pulse transition-all shadow-lg shadow-red-500/30 ring-1 ring-white/20 active:scale-95"
+              className="w-full py-3 bg-gradient-to-r from-red-600 to-rose-600 hover:from-red-500 hover:to-rose-500 text-white rounded-xl text-xs font-bold flex items-center justify-center space-x-2 animate-pulse transition-all shadow-lg shadow-red-500/30 ring-1 ring-white/20 active:scale-95"
             >
-              <MicOff className="w-3.5 h-3.5" />
-              <span>Stop & Analyze Recording</span>
+              <MicOff className="w-4 h-4" />
+              <span>Stop & Run Forensic Analysis</span>
             </button>
           )}
         </div>
-      </div>
+      )}
     </Card3D>
   );
 };
